@@ -13,8 +13,12 @@ import (
 var state bus.State
 var mutex sync.RWMutex
 
-func Serve(numBuses, initialCount, delta int, interval time.Duration) http.HandlerFunc {
-	state, _ = bus.NewState(numBuses, initialCount)
+func Serve(numBuses, initialCount, delta int, interval time.Duration) (http.HandlerFunc, error) {
+	var err error
+	state, err = bus.NewState(numBuses, initialCount)
+	if err != nil {
+		return nil, err
+	}
 	rand.Seed(time.Now().UnixNano())
 	max := delta
 	min := -delta
@@ -29,7 +33,7 @@ func Serve(numBuses, initialCount, delta int, interval time.Duration) http.Handl
 		}
 	}()
 
-	return accessState
+	return accessState, nil
 }
 
 func accessState(w http.ResponseWriter, r *http.Request) {
