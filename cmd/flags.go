@@ -2,6 +2,8 @@ package cmd
 
 import (
 	"flag"
+	"fmt"
+	"os"
 	"time"
 )
 
@@ -18,6 +20,14 @@ func getFlags() args {
 	defaults := args{
 		Host: "localhost",
 		Port: "8080",
+	}
+
+	flag.Usage = func() {
+		fmt.Printf("Usage: %s [host address] [port] [flags]\n", os.Args[0])
+		fmt.Printf("\thost\n\t\tThe host address to bind to (default localhost)\n")
+		fmt.Printf("\tport\n\t\tThe port to bind to (default 8080)\n")
+		fmt.Printf("flags:\n")
+		flag.PrintDefaults()
 	}
 
 	flag.IntVar(&defaults.Autos, "nAutos", 5, "number of autos to run during the simulation")
