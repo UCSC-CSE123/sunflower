@@ -25,8 +25,8 @@ func Serve(numBuses, initialCount, delta int, interval time.Duration) http.Handl
 		for range time.Tick(interval) {
 			mutex.Lock()
 			for i := range state.Autos {
-				deltaNot := rand.Intn(max-min) + min
-				state.Autos[i].UpdateCount(deltaNot)
+				deltaNaught := rand.Intn(max-min) + min
+				state.Autos[i].UpdateCount(deltaNaught)
 			}
 			mutex.Unlock()
 		}
