@@ -1,16 +1,9 @@
 package bus
 
-import (
-	"os/exec"
-)
+import "github.com/google/uuid"
 
-func getUUID() (string, error) {
-	out, err := exec.Command("uuidgen").Output()
-	if err != nil {
-		return "", err
-	}
-	out = out[:len(out)-1]
-	return string(out), nil
+func getUUID() string {
+	return uuid.New().String()
 }
 
 // Auto represents an automobile with an ID and
@@ -28,23 +21,19 @@ type State struct {
 }
 
 // NewState makes a new slice of autos with the given parameters.
-// An error may occur if the uuidgen command is not present.
-func NewState(nAutos, initCount int) (State, error) {
+func NewState(nAutos, initCount int) State {
 	tAutos := make([]Auto, nAutos)
-	var err error
 
 	for i := range tAutos {
-		tAutos[i].ID, err = getUUID()
-		if err != nil {
-			return State{}, err
-		}
+		tAutos[i].ID = getUUID()
+
 		tAutos[i].Count = initCount
 	}
 
 	return State{
 		Autos:    tAutos,
 		NumAutos: nAutos,
-	}, nil
+	}
 }
 
 // UpdateCount updates the internal count of an auto.

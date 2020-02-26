@@ -16,12 +16,8 @@ var mutex sync.RWMutex
 // Serve initializes a state with the given parameters.
 // That state is then asynchronously updated according the given interval.
 // Both reads and writes are thread safe.
-func Serve(numBuses, initialCount, delta int, interval time.Duration) (http.HandlerFunc, error) {
-	var err error
-	state, err = bus.NewState(numBuses, initialCount)
-	if err != nil {
-		return nil, err
-	}
+func Serve(numBuses, initialCount, delta int, interval time.Duration) http.HandlerFunc {
+	state = bus.NewState(numBuses, initialCount)
 	rand.Seed(time.Now().UnixNano())
 	max := delta
 	min := -delta
@@ -36,7 +32,7 @@ func Serve(numBuses, initialCount, delta int, interval time.Duration) (http.Hand
 		}
 	}()
 
-	return accessState, nil
+	return accessState
 }
 
 func accessState(w http.ResponseWriter, r *http.Request) {
