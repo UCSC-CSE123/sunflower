@@ -13,6 +13,9 @@ import (
 var state bus.State
 var mutex sync.RWMutex
 
+// Serve initializes a state with the given parameters.
+// That state is then asynchronously updated according the given interval.
+// Both reads and writes are thread safe.
 func Serve(numBuses, initialCount, delta int, interval time.Duration) (http.HandlerFunc, error) {
 	var err error
 	state, err = bus.NewState(numBuses, initialCount)
