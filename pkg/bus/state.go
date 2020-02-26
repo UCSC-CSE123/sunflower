@@ -4,20 +4,24 @@ import (
 	"os/exec"
 )
 
-func getUUID() ([]byte, error) {
+func getUUID() (string, error) {
 	out, err := exec.Command("uuidgen").Output()
 	if err != nil {
-		return nil, err
+		return "", err
 	}
-	return out, nil
+	out = out[:len(out)-1]
+	return string(out), nil
 }
 
 type Auto struct {
-	ID    []byte `json:"ID"`
+	ID    string `json:"ID"`
 	Count int    `json:"Count"`
 }
 
-type State []Auto
+type State struct {
+	NumAutos int    `json:"NumAutos"`
+	Autos    []Auto `json:"Autos"`
+}
 
 func NewState(nAutos, initCount int) (State, error) {
 	tAutos := make([]Auto, nAutos)
@@ -26,12 +30,15 @@ func NewState(nAutos, initCount int) (State, error) {
 	for i := range tAutos {
 		tAutos[i].ID, err = getUUID()
 		if err != nil {
-			return nil, err
+			return State{}, err
 		}
 		tAutos[i].Count = initCount
 	}
 
-	return tAutos, nil
+	return State{
+		Autos:    tAutos,
+		NumAutos: nAutos,
+	}, nil
 }
 
 func (bus *Auto) UpdateCount(delta int) {

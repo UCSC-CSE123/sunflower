@@ -13,27 +13,26 @@ import (
 var state bus.State
 var mutex sync.RWMutex
 
-func init() {
-	state, _ = bus.NewState(10, 25)
+func Serve(numBuses, initialCount, delta int, interval time.Duration) http.HandlerFunc {
+	state, _ = bus.NewState(numBuses, initialCount)
 	rand.Seed(time.Now().UnixNano())
-	max := 10 + 1
-	min := -10
+	max := delta
+	min := -delta
 	go func() {
-		for range time.Tick(10 * time.Second) {
-
+		for range time.Tick(interval) {
 			mutex.Lock()
-
-			for i := range state {
-				state[i].UpdateCount(rand.Intn(max-min) + min)
+			for i := range state.Autos {
+				deltaNot := rand.Intn(max-min) + min
+				state.Autos[i].UpdateCount(deltaNot)
 			}
-
 			mutex.Unlock()
-
 		}
 	}()
+
+	return accessState
 }
 
-func AccessState(w http.ResponseWriter, r *http.Request) {
+func accessState(w http.ResponseWriter, r *http.Request) {
 	mutex.RLock()
 	w.Header().Set("Content-type", "application/json")
 	json.NewEncoder(w).Encode(state)
