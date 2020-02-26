@@ -11,7 +11,7 @@ import (
 func Execute() error {
 	args := getFlags()
 
-	if err := serverSetup(args.Host, args.Port); err != nil {
+	if err := serverSetup(args); err != nil {
 		return err
 	}
 
@@ -20,12 +20,12 @@ func Execute() error {
 
 // Initializes the default http server using
 // the given host and port.
-func serverSetup(host, port string) error {
+func serverSetup(inputs args) error {
 	// Add all the routes.
-	addRoutes()
+	addRoutes(inputs)
 
 	// Start the server.
-	addr := net.JoinHostPort(host, port)
+	addr := net.JoinHostPort(inputs.Host, inputs.Port)
 	log.Println("starting server at", addr)
 
 	// This should only return on an error.

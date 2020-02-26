@@ -2,13 +2,12 @@ package cmd
 
 import (
 	"net/http"
-	"time"
 
 	"github.com/UCSC-CSE123/sunflower/api/sf"
 )
 
-func addRoutes() {
+func addRoutes(inputs args) {
 	// Add all routes like this:
 	// http.HandleFunc("/api/endpoint", func)
-	http.HandleFunc("/api/state", sf.Serve(10, 100, 25, 500*time.Millisecond))
+	http.HandleFunc("/api/state", sf.Serve(inputs.Autos, inputs.InitialCount, inputs.Delta, inputs.Duration))
 }
