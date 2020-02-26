@@ -18,6 +18,11 @@ Then build the code using `go build`
 cd sunflower
 go build
 ```
+### Installing from pre-compiled binaries
+
+Pre-compiled binaries are available at https://github.com/UCSC-CSE123/sunflower/releases.
+
+
 
 ## Running
 
