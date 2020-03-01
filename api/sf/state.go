@@ -10,14 +10,14 @@ import (
 	"github.com/UCSC-CSE123/sunflower/pkg/bus"
 )
 
-var state bus.State
-var mutex sync.RWMutex
-
 // Serve initializes a state with the given parameters.
 // That state is then asynchronously updated according the given interval.
 // Both reads and writes are thread safe.
+// Instantiating this function n times yields n distinct states that are accessible via the return http.HandlerFunc paramater.
 func Serve(numBuses, initialCount, delta int, interval time.Duration) http.HandlerFunc {
-	state = bus.NewState(numBuses, initialCount)
+	var mutex sync.RWMutex
+	state := bus.NewState(numBuses, initialCount)
+
 	rand.Seed(time.Now().UnixNano())
 	max := delta
 	min := -delta
@@ -32,12 +32,10 @@ func Serve(numBuses, initialCount, delta int, interval time.Duration) http.Handl
 		}
 	}()
 
-	return accessState
-}
-
-func accessState(w http.ResponseWriter, r *http.Request) {
-	mutex.RLock()
-	w.Header().Set("Content-type", "application/json")
-	json.NewEncoder(w).Encode(state)
-	mutex.RUnlock()
+	return func(w http.ResponseWriter, r *http.Request) {
+		mutex.RLock()
+		w.Header().Set("Content-type", "application/json")
+		json.NewEncoder(w).Encode(state)
+		mutex.RUnlock()
+	}
 }
