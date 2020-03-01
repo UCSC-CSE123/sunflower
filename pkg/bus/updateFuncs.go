@@ -19,12 +19,9 @@ func returnTrueWithPercent(n int) bool {
 // * Autos stop independently of each other (ie one auto does NOT have to wait for another auto to finish it stop before it can stop).
 // * Autos are NOT added nor removed from the state.
 // * However, autos do stop (if the probability is in their favor) at the same time.
-//
-// The simulation can be recreated by passing in a custom seed.
-func SemiRealisticSimWithoutAutoAdditions(seed int64, waitTime time.Duration, passengerDelta, probability int) func(*State, *sync.RWMutex) {
+func SemiRealisticSimWithoutAutoAdditions(waitTime time.Duration, passengerDelta, probability int) func(*State, *sync.RWMutex) {
+
 	return func(iState *State, mutex *sync.RWMutex) {
-		// Seed the random number generator.
-		rand.Seed(seed)
 
 		// We'll need a wait group.
 		var jobs sync.WaitGroup

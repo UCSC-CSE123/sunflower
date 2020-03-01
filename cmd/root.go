@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"log"
+	"math/rand"
 	"net"
 	"net/http"
 )
@@ -23,6 +24,9 @@ func Execute() error {
 func serverSetup(inputs args) error {
 	// Add all the routes.
 	addRoutes(inputs)
+
+	// Seed the random number generator.
+	rand.Seed(inputs.Seed)
 
 	// Start the server.
 	addr := net.JoinHostPort(inputs.Host, inputs.Port)

@@ -17,7 +17,6 @@ import (
 func ServeInstantChange(numBuses, initialCount, delta int, interval time.Duration) http.HandlerFunc {
 
 	updateFunc := func(internalState *bus.State, mutex *sync.RWMutex) {
-		rand.Seed(time.Now().UnixNano())
 		max := delta
 		min := -delta
 		mutex.Lock()

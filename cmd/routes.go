@@ -10,7 +10,7 @@ import (
 func addRoutes(inputs args) {
 	// Add all routes like this:
 	// http.HandleFunc("/api/endpoint", func)
-	updateFunc := bus.SemiRealisticSimWithoutAutoAdditions(inputs.Seed, inputs.StopDuration, inputs.Delta, inputs.StopProbability)
+	updateFunc := bus.SemiRealisticSimWithoutAutoAdditions(inputs.StopDuration, inputs.Delta, inputs.StopProbability)
 	handler := sf.CustomServe(inputs.Autos, inputs.InitialCount, inputs.StopPeriod, updateFunc)
 	http.HandleFunc("/api/state", handler)
 }
