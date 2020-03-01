@@ -1,6 +1,8 @@
 package bus
 
-import "github.com/google/uuid"
+import (
+	"github.com/google/uuid"
+)
 
 func getUUID() string {
 	return uuid.New().String()

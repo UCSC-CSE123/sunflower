@@ -36,11 +36,17 @@ func ServeInstantChange(numBuses, initialCount, delta int, interval time.Duratio
 // It returns an http.HandlerFunc that has access to that state.
 func CustomServe(numBuses, initialCount int, interval time.Duration, updateFunc func(*bus.State, *sync.RWMutex)) http.HandlerFunc {
 	var mutex sync.RWMutex
-	state := bus.NewState(numBuses, initialCount)
+	state := StateWDebug{
+		State: bus.NewState(numBuses, initialCount),
+		Info: DebugInfo{
+			StopPeriodicity: interval.String(),
+			InitialCount:    initialCount,
+		},
+	}
 
 	go func() {
 		for range time.Tick(interval) {
-			updateFunc(&state, &mutex)
+			updateFunc(&state.State, &mutex)
 		}
 	}()
 
