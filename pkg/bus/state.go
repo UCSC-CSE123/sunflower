@@ -6,11 +6,19 @@ func getUUID() string {
 	return uuid.New().String()
 }
 
+const (
+	// Loading represents the loading state.
+	Loading = "Loading"
+	// InTransit represents the in transit state.
+	InTransit = "In Transit"
+)
+
 // Auto represents an automobile with an ID and
 // a person count.
 type Auto struct {
-	ID    string `json:"ID"`
-	Count int    `json:"Count"`
+	ID     string `json:"ID"`
+	Count  int    `json:"Count"`
+	Status string `json:"Status"`
 }
 
 // State represents the number of autos in a state along
@@ -28,6 +36,7 @@ func NewState(nAutos, initCount int) State {
 		tAutos[i].ID = getUUID()
 
 		tAutos[i].Count = initCount
+		tAutos[i].Status = InTransit
 	}
 
 	return State{
