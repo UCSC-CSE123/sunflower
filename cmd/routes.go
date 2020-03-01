@@ -9,6 +9,6 @@ import (
 func addRoutes(inputs args) {
 	// Add all routes like this:
 	// http.HandleFunc("/api/endpoint", func)
-	stateHandler := sf.Serve(inputs.Autos, inputs.InitialCount, inputs.Delta, inputs.Duration)
+	stateHandler := sf.ServeInstantChange(inputs.Autos, inputs.InitialCount, inputs.Delta, inputs.Duration)
 	http.HandleFunc("/api/state", stateHandler)
 }
