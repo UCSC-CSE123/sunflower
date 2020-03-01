@@ -16,10 +16,12 @@ import (
 // Instantiating this function n times yields n distinct states that are accessible via the return http.HandlerFunc paramater.
 func ServeInstantChange(numBuses, initialCount, delta int, interval time.Duration) http.HandlerFunc {
 
-	updateFunc := func(internalState *bus.State) {
+	updateFunc := func(internalState *bus.State, mutex *sync.RWMutex) {
 		rand.Seed(time.Now().UnixNano())
 		max := delta
 		min := -delta
+		mutex.Lock()
+		defer mutex.Unlock()
 		for i := range internalState.Autos {
 			deltaNaught := rand.Intn(max-min) + min
 			internalState.Autos[i].UpdateCount(deltaNaught)
@@ -32,22 +34,20 @@ func ServeInstantChange(numBuses, initialCount, delta int, interval time.Duratio
 // CustomServe instantiate a bus state with numBuses and initialCount.
 // It then updates that state asynchronously every interval according to updateFunc.
 // It returns an http.HandlerFunc that has access to that state.
-func CustomServe(numBuses, initialCount int, interval time.Duration, updateFunc func(*bus.State)) http.HandlerFunc {
+func CustomServe(numBuses, initialCount int, interval time.Duration, updateFunc func(*bus.State, *sync.RWMutex)) http.HandlerFunc {
 	var mutex sync.RWMutex
 	state := bus.NewState(numBuses, initialCount)
 
 	go func() {
 		for range time.Tick(interval) {
-			mutex.Lock()
-			updateFunc(&state)
-			mutex.Unlock()
+			updateFunc(&state, &mutex)
 		}
 	}()
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		mutex.RLock()
+		defer mutex.RUnlock()
 		w.Header().Set("Content-type", "application/json")
 		json.NewEncoder(w).Encode(state)
-		mutex.RUnlock()
 	}
 }
