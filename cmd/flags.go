@@ -8,12 +8,15 @@ import (
 )
 
 type args struct {
-	Host         string
-	Port         string
-	Duration     time.Duration
-	Autos        int
-	InitialCount int
-	Delta        int
+	Host            string
+	Port            string
+	StopPeriod      time.Duration
+	StopDuration    time.Duration
+	StopProbability int
+	Autos           int
+	InitialCount    int
+	Delta           int
+	Seed            int64
 }
 
 func getFlags() args {
@@ -31,9 +34,15 @@ func getFlags() args {
 	}
 
 	flag.IntVar(&defaults.Autos, "nAutos", 5, "number of autos to run during the simulation")
-	flag.IntVar(&defaults.Delta, "delta", 25, "the amount of passengers to change during a stop [rand(-delta,delta)]")
+	flag.IntVar(&defaults.Delta, "delta", 10, "the amount of passengers to change during a stop [rand(-delta,delta)]")
 	flag.IntVar(&defaults.InitialCount, "passengers", 50, "the amount of passengers autos start with")
-	flag.DurationVar(&defaults.Duration, "period", 5*time.Second, "The periodicity of auto stops")
+	flag.IntVar(&defaults.StopProbability, "probability", 75, "the probability that a bus stops")
+	flag.Int64Var(&defaults.Seed, "seed", time.Now().UnixNano(), "the seed to pass to the RNG -- by default the seed is the current time")
+	// Why 11 and 5?
+	// Because there're prime!
+	// So there's no chance that a bus is perpetually stuck in a "Loading" state because the stop and loading time are multiples of each other.
+	flag.DurationVar(&defaults.StopPeriod, "period", 11*time.Second, "The periodicity of auto stops")
+	flag.DurationVar(&defaults.StopDuration, "duration", 5*time.Second, "The length of time a bus is stopped for")
 	flag.Parse()
 
 	arguments := flag.Args()

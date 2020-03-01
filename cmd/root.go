@@ -26,6 +26,7 @@ func serverSetup(inputs args) error {
 
 	// Start the server.
 	addr := net.JoinHostPort(inputs.Host, inputs.Port)
+	log.Printf("server parameters: %+v\n", inputs)
 	log.Printf("starting server at http://%s/api/state", addr)
 
 	// This should only return on an error.
